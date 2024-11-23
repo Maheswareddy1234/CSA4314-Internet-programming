@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Food Order System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://via.placeholder.com/1500x900'); /* Replace with actual background image URL */
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1, h2, p {
+            text-align: center;
+        }
+
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .items {
+            margin: 10px 0;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .order-history {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Online Food Order System</h1>
+        <div id="register">
+            <h2>Register</h2>
+            <input type="text" id="regUsername" placeholder="Enter Username" required>
+            <input type="email" id="regEmail" placeholder="Enter Email" required>
+            <input type="password" id="regPassword" placeholder="Enter Password" required>
+            <button onclick="register()">Register</button>
+        </div>
+
+        <div id="login" class="hidden">
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Enter Username" required>
+            <input type="password" id="loginPassword" placeholder="Enter Password" required>
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="shop" class="hidden">
+            <h2>Available Items</h2>
+            <div class="items" id="itemList">
+                <!-- Items will be populated dynamically -->
+            </div>
+            <button onclick="showOrderDetails()">Proceed to Order</button>
+        </div>
+
+        <div id="orderDetailsPage" class="hidden">
+            <h2>Enter Order Details</h2>
+            <input type="text" id="customerName" placeholder="Enter Your Name" required>
+            <input type="text" id="customerPlace" placeholder="Enter Your Place" required>
+            <button onclick="saveOrder()">Save Order</button>
+        </div>
+
+        <div id="orderHistory" class="hidden">
+            <h2>Order History</h2>
+            <div id="orderDetails" class="order-history">
+                <p>No orders yet.</p>
+            </div>
+            <button onclick="reset()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { name: "Pizza", price: 250, img: "https://via.placeholder.com/50?text=Pizza" },
+            { name: "Burger", price: 150, img: "https://via.placeholder.com/50?text=Burger" },
+            { name: "Pasta", price: 200, img: "https://via.placeholder.com/50?text=Pasta" },
+            { name: "Biryani", price: 300, img: "https://via.placeholder.com/50?text=Biryani" },
+            { name: "Samosa", price: 50, img: "https://via.placeholder.com/50?text=Samosa" },
+            { name: "Paneer Tikka", price: 400, img: "https://via.placeholder.com/50?text=Paneer+Tikka" },
+            { name: "Chicken Curry", price: 350, img: "https://via.placeholder.com/50?text=Chicken+Curry" },
+            { name: "Naan", price: 40, img: "https://via.placeholder.com/50?text=Naan" },
+            { name: "Rice", price: 100, img: "https://via.placeholder.com/50?text=Rice" },
+            { name: "Dal", price: 120, img: "https://via.placeholder.com/50?text=Dal" }
+        ];
+
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let currentUser = null;
+        let cart = [];
+
+        function register() {
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+
+            if (username && email && password) {
+                users.push({ username, email, password });
+                localStorage.setItem("users", JSON.stringify(users));
+                alert('Registration successful!');
+                document.getElementById('register').classList.add('hidden');
+                document.getElementById('login').classList.remove('hidden');
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                alert('Login successful!');
+                document.getElementById('login').classList.add('hidden');
+                document.getElementById('shop').classList.remove('hidden');
+                populateItems();
+            } else {
+                alert('Invalid username or password.');
+            }
+        }
+
+        function populateItems() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = items.map(item => `
+                <div class="item">
+                    <img src="${item.img}" alt="${item.name}">
+                    <span>${item.name} - ₹${item.price}</span>
+                    <button onclick="addToCart('${item.name}', ${item.price})">Add to Cart</button>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(item, price) {
+            cart.push({ item, price });
+            alert(`${item} added to cart!`);
+        }
+
+        function showOrderDetails() {
+            if (cart.length === 0) {
+                alert('No items in the cart.');
+                return;
+            }
+            document.getElementById('shop').classList.add('hidden');
+            document.getElementById('orderDetailsPage').classList.remove('hidden');
+        }
+
+        function saveOrder() {
+            const name = document.getElementById('customerName').value.trim();
+            const place = document.getElementById('customerPlace').value.trim();
+
+            if (name && place) {
+                const orderDetails = {
+                    user: currentUser.username,
+                    customerName: name,
+                    place,
+                    orders: cart,
+                };
+
+                document.getElementById('orderDetailsPage').classList.add('hidden');
+                document.getElementById('orderHistory').classList.remove('hidden');
+
+                const orderDisplay = document.getElementById('orderDetails');
+                orderDisplay.innerHTML = `
+                    <p><strong>Customer:</strong> ${orderDetails.customerName}</p>
+                    <p><strong>Place:</strong> ${orderDetails.place}</p>
+                    ${orderDetails.orders.map(o => `<p>${o.item} - ₹${o.price}</p>`).join('')}
+                `;
+                alert('Order saved successfully!');
+            } else {
+                alert('Please fill all details.');
+            }
+        }
+
+        function reset() {
+            currentUser = null;
+            cart = [];
+            alert('Logged out successfully.');
+            document.getElementById('orderHistory').classList.add('hidden');
+            document.getElementById('register').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

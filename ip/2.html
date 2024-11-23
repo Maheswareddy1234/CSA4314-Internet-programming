@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Food Order System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('<URL_TO_YOUR_IMAGE>'); /* Replace with your actual image URL or local file path */
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        h1, h2, p {
+            text-align: center;
+        }
+
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .items {
+            margin: 10px 0;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .order-history {
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Online Food Order System</h1>
+        <div id="register">
+            <h2>Register</h2>
+            <input type="text" id="regUsername" placeholder="Enter Username" required>
+            <input type="email" id="regEmail" placeholder="Enter Email" required>
+            <input type="password" id="regPassword" placeholder="Enter Password" required>
+            <button onclick="register()">Register</button>
+        </div>
+
+        <div id="login" class="hidden">
+            <h2>Login</h2>
+            <input type="text" id="loginUsername" placeholder="Enter Username" required>
+            <input type="password" id="loginPassword" placeholder="Enter Password" required>
+            <button onclick="login()">Login</button>
+        </div>
+
+        <div id="shop" class="hidden">
+            <h2>Available Items</h2>
+            <div class="items" id="itemList">
+                <!-- Items will be populated dynamically -->
+            </div>
+            <button onclick="showOrderDetails()">Proceed to Order</button>
+        </div>
+
+        <div id="orderDetailsPage" class="hidden">
+            <h2>Enter Order Details</h2>
+            <input type="text" id="customerName" placeholder="Enter Your Name" required>
+            <input type="text" id="customerPlace" placeholder="Enter Your Place" required>
+            <button onclick="saveOrder()">Save Order</button>
+        </div>
+
+        <div id="orderHistory" class="hidden">
+            <h2>Order History</h2>
+            <div id="orderDetails" class="order-history">
+                <p>No orders yet.</p>
+            </div>
+            <button onclick="reset()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Add your existing JavaScript code here
+    </script>
+</body>
+</html>
